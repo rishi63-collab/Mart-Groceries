@@ -34,7 +34,7 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ AUTO CALCULATE TOTAL PRICE (important)
+// AUTO CALCULATE TOTAL PRICE
 cartSchema.pre("save", function (next) {
   this.totalPrice = this.price * this.quantity;
   next();

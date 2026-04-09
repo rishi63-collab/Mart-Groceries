@@ -223,10 +223,10 @@ const Product = (props) => {
           context.setAlertBox({
             open: true,
             error: false,
-            msg: "Added to Wishlist ❤️",
+            msg: "Added to Wishlist ",
           });
 
-          context.loadWishlist(); // 🔥 IMPORTANT
+          context.loadWishlist(); 
         }
       } else {
         const res = await postData("/api/wishlist/remove", {
@@ -238,10 +238,10 @@ const Product = (props) => {
           context.setAlertBox({
             open: true,
             error: false,
-            msg: "Removed from Wishlist ❌",
+            msg: "Removed from Wishlist ",
           });
 
-          context.loadWishlist(); // 🔥 IMPORTANT
+          context.loadWishlist(); 
         }
       }
     } catch (error) {

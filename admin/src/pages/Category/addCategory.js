@@ -103,11 +103,11 @@ const AddCategory = () => {
         formData.append("images", file);
       }
 
-      // ✅ backend returns ONLY newly uploaded images
+      //  backend returns ONLY newly uploaded images
       const res = await uploadImage(apiEndPoint, formData);
 
       if (Array.isArray(res?.images)) {
-        // ✅ append ONLY new images (no looping)
+        //  append ONLY new images (no looping)
         setPreviews((prev) => [...prev, ...res.images]);
       }
 
@@ -275,7 +275,7 @@ const AddCategory = () => {
                       <input
                         type="file"
                         multiple
-                        disabled={uploading || isLoading} // ✅ IMPORTANT
+                        disabled={uploading || isLoading} 
                         onChange={(e) =>
                           onChangeFile(e, "/api/category/upload")
                         }

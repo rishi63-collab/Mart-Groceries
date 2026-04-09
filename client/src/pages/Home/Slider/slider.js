@@ -13,11 +13,11 @@ const SliderBox = ({ data }) => {
     slidesToScroll: 1,
     fade: true,
     arrows: true,
-    autoplay: true, // ✅ auto slide
-    autoplaySpeed: 3000, // ✅ 3 sec
+    autoplay: true, 
+    autoplaySpeed: 3000, 
   };
 
-  // ✅ Filter active banners
+  // Filter active banners
   // const activeSlides = Array.isArray(data)
   //   ? data.filter((slide) => slide.autoActive !== false)
   //   : [];

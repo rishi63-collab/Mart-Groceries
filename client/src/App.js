@@ -36,7 +36,7 @@ function App() {
 
   const [cartCount, setCartCount] = useState(0);
 
-  // ✅ FIXED LOGIN STATE (Boolean)
+  //  FIXED LOGIN STATE (Boolean)
   const [isLogin, setIsLogin] = useState(
     localStorage.getItem("isLogin") === "true",
   );
@@ -197,7 +197,7 @@ const loadWishlist = useCallback(async () => {
         setAlertBox({
           open: true,
           error: false,
-          msg: "Product added to cart ✅",
+          msg: "Product added to cart ",
         });
       } else {
         setAlertBox({
@@ -230,13 +230,13 @@ const loadWishlist = useCallback(async () => {
     setCartItems([]);
   };
 
-  // ✅ FIXED SIGN IN
+  //  FIXED SIGN IN
   const signIn = () => {
     localStorage.setItem("isLogin", true);
     setIsLogin(true);
   };
 
-  // ✅ FIXED SIGN OUT
+  //  FIXED SIGN OUT
   const signOut = () => {
     localStorage.removeItem("isLogin");
     localStorage.removeItem("token");

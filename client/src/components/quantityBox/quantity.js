@@ -6,30 +6,30 @@ const QuantityBox = ({ quantity = 1, max = 10, onChange }) => {
 
   const [inputValue, setInputValue] = useState(quantity);
 
-  // ✅ sync with parent
+  //  sync with parent
   useEffect(() => {
     setInputValue(quantity);
   }, [quantity]);
 
-  // ✅ increment
+  //  increment
   const increment = () => {
     if (inputValue < max) {
       const newValue = inputValue + 1;
       setInputValue(newValue);
-      onChange?.(newValue);   // safe call
+      onChange?.(newValue);  
     }
   };
 
-  // ✅ decrement
+  //  decrement
   const decrement = () => {
     if (inputValue > 1) {
       const newValue = inputValue - 1;
       setInputValue(newValue);
-      onChange?.(newValue);   // safe call
+      onChange?.(newValue);   
     }
   };
 
-  // ✅ handle manual input (future safe)
+  //  handle manual input 
   const handleChange = (e) => {
     let value = parseInt(e.target.value);
 

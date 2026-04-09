@@ -37,7 +37,7 @@ const Header = () => {
   const context = useContext(MyContext);
   const navigate = useNavigate();
 
-  // ✅ LOGIN SYNC
+  //  LOGIN SYNC
   useEffect(() => {
     if (context.isLogin) {
       const storedUser = localStorage.getItem("user");
@@ -49,7 +49,7 @@ const Header = () => {
     }
   }, [context.isLogin]);
 
-  // ✅ LOGOUT
+  // LOGOUT
   const handleLogout = () => {
     context.signOut();
     setUser(null);
@@ -57,7 +57,7 @@ const Header = () => {
     navigate("/signin");
   };
 
-  // ✅ SCROLL FIX
+  // SCROLL FIX
   useEffect(() => {
     const handleScroll = () => {
       if (!headerRef.current) return;
@@ -73,14 +73,14 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ✅ CATEGORY LOAD
+  // CATEGORY LOAD
   useEffect(() => {
     if (Array.isArray(context.categories)) {
       setcategories(context.categories);
     }
   }, [context.categories]);
 
-  // ✅ COUNTRY API
+  // COUNTRY API
   const getCountry = async () => {
     try {
       const res = await axios.get(

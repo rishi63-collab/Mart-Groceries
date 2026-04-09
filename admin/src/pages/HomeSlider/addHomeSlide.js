@@ -67,7 +67,7 @@ const AddHomeSlide = () => {
     try {
       let uploadedUrls = preview;
 
-      // ✅ upload only if new images
+      //  upload only if new images
       if (images.length > 0) {
         const formData = new FormData();
 

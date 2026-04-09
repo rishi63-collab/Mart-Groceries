@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./PopularCategories.css"; // 👈 import karo
+import "./PopularCategories.css"; 
 
 const PopularCategories = ({ data }) => {
   return (

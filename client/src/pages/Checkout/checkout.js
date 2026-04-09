@@ -20,31 +20,28 @@ const Checkout = () => {
         if (res?.success) {
           setCartItems(res.cartItems);
         }
-      },
+      }
     );
   }, [user]);
 
   // ================= TOTAL =================
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
-    0,
+    0
   );
 
-  // ================= PLACE ORDER =================
-  //   const handleCheckout = () => {
-  //     if (!address) {
-  //       context.setAlertBox({
-  //         open: true,
-  //         error: true,
-  //         msg: "Please enter delivery address!",
-  //       });
-  //       return;
-  //     }
+  // ================= LOAD RAZORPAY SCRIPT =================
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
-  //     // 👉 next step: payment
-  //     console.log("Proceeding to payment...");
-  //   };
-
+  // ================= HANDLE CHECKOUT =================
   const handleCheckout = async () => {
     if (!address) {
       context.setAlertBox({
@@ -55,7 +52,7 @@ const Checkout = () => {
       return;
     }
 
-    // ✅ LOAD SCRIPT
+    //  LOAD SCRIPT
     const loaded = await loadRazorpay();
 
     if (!loaded) {
@@ -63,66 +60,97 @@ const Checkout = () => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    // ✅ CREATE ORDER
+    //  CREATE ORDER
     const res = await fetch("http://localhost:8000/api/orders/create-order", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ amount: total }),
     });
 
     const data = await res.json();
 
+    // RAZORPAY OPTIONS
     const options = {
-      key: "YOUR_RAZORPAY_KEY",
+      key: "RAZORPAY_KEY_ID", 
       amount: data.order.amount,
       currency: "INR",
       name: "Your Store",
       description: "Order Payment",
       order_id: data.order.id,
 
+      // ================= PAYMENT HANDLER =================
       handler: async function (response) {
-        await fetch("http://localhost:8000/api/orders/save", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: user._id,
-            products: cartItems.map((item) => ({
-              product: item.product._id,
-              quantity: item.quantity,
-              price: item.price,
-            })),
-            amount: total,
-            address,
-            paymentId: response.razorpay_payment_id,
-            orderId: response.razorpay_order_id,
-            status: "paid",
-          }),
-        });
+        try {
+          // VERIFY PAYMENT
+          const verifyRes = await fetch(
+            "http://localhost:8000/api/orders/verify",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(response),
+            }
+          );
 
-        context.setAlertBox({
-          open: true,
-          error: false,
-          msg: "Payment Successful 🎉",
-        });
+          const verifyData = await verifyRes.json();
+
+          if (!verifyData.success) {
+            alert("Payment verification failed");
+            return;
+          }
+
+          //  SAVE ORDER
+          await fetch("http://localhost:8000/api/orders/save", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: user._id,
+              products: cartItems.map((item) => ({
+                product: item.product._id,
+                quantity: item.quantity,
+                price: item.price,
+              })),
+              amount: total,
+              address,
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              status: "paid",
+            }),
+          });
+
+          //  CLEAR CART
+          await fetch(
+            `http://localhost:8000/api/cart/clear/${user._id}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          //  UPDATE HEADER
+          context.setCartUpdated((prev) => !prev);
+
+          //  SUCCESS MESSAGE
+          context.setAlertBox({
+            open: true,
+            error: false,
+            msg: "Payment Successful ",
+          });
+        } catch (error) {
+          console.log(error);
+          alert("Something went wrong ");
+        }
       },
 
-      theme: { color: "#3399cc" },
+      theme: {
+        color: "#3399cc",
+      },
     };
 
     const rzp = new window.Razorpay(options);
     rzp.open();
-  };
-
-  const loadRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
   };
 
   return (
